@@ -1,8 +1,23 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
+import TableRow from './component/TableRow';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      details: [],
+      name: '',
+      salary: '',
+      age: ''
+    };
+  }
+
+  componentDidMount() {
+    this.getAllEmp();
+  }
 
   getAllEmp() {
     try {
@@ -12,6 +27,7 @@ class App extends Component {
       }).then(response => {
         console.log('All Employee Data');
         console.log(response.data);
+        this.setState({ details: response.data });
       });
     } catch (err) {
       console.log('Error on fetching all employee data');
@@ -34,38 +50,7 @@ class App extends Component {
     }
   }
 
-  updateEmpById(id, data) {
-    try {
-      axios({
-        method: 'put',
-        url: `http://dummy.restapiexample.com/api/v1/update/${id}`,
-        data: data
-      }).then(response => {
-        console.log('Updated Employee Data');
-        console.log(response.data);
-      });
-    } catch (err) {
-      console.log('Error on updating selected employee data');
-      console.log(err);
-    }
-  }
-
-  deleteEmpById(id) {
-    try {
-      axios({
-        method: 'delete',
-        url: `http://dummy.restapiexample.com/api/v1/delete/${id}`
-      }).then(response => {
-        console.log('Deleted Employee Data');
-        console.log(response.data);
-      });
-    } catch (err) {
-      console.log('Error on deleting selected employee data');
-      console.log(err);
-    }
-  }
-
-  saveEmpById(data) {
+  saveEmp(data) {
     try {
       axios({
         method: 'post',
@@ -74,6 +59,7 @@ class App extends Component {
       }).then(response => {
         console.log('Added Employee Data');
         console.log(response.data);
+        this.getAllEmp();
       });
     } catch (err) {
       console.log('Error on adding selected employee data');
@@ -81,316 +67,109 @@ class App extends Component {
     }
   }
 
+  resetCreateForm() {
+    this.setState({
+      name: '',
+      salary: '',
+      age: '',
+    })
+  }
+
   render() {
+    var rows = [];
+    this.state.details.forEach(function (details) {
+      rows.push(
+        <TableRow
+          Id={details.id}
+          Name={details.employee_name}
+          Salary={details.employee_salary}
+          Age={details.employee_age}
+        />
+      );
+    });
+
+    console.log('ROWS===============================');
+    console.log(rows);
 
     const data = {
-      name: 'Rue',
-      age: '21',
-      salary: '30000'
+      name: this.state.name,
+      salary: this.state.salary,
+      age: this.state.age
     };
 
     return (
       <div>
-        {/* <div className='header'>
-          {/* <div className='logos'>
-            <img src={'ubp.png'} className='logo' alt='UnionBankPH' />
-          </div> 
-    </div>*/}
-        <div id='sidebarMenu'>
-          <ul className='sidebarMenuInner'>
-            <a href="#open-modal-view"><li onClick={() => { this.getEmpById('1139') }}>View Employee</li></a>
-            <a href="#open-modal-add"><li onClick={() => { this.saveEmpById(data) }}>Add Employee</li></a>
-            <a href="#open-modal-update"><li onClick={() => { this.updateEmpById('1128', data) }}>Update Employee</li></a>
-            <a href="#open-modal-delete"><li onClick={() => { this.deleteEmpById('1128') }}>Delete Employee</li></a>
-          </ul>
-        </div>
-        <div className='header'>
-        </div>
         <div className='main'>
           <div>
-            <h1>CRUD APP - SAMPLE</h1>
-            <div class="tbl-header">
-              <table cellpadding="0" cellspacing="0" border="0">
+            <center>
+              <h1>CRUD APP - SAMPLE</h1>
+            </center>
+            <br />
+            <div className='tbl-header'>
+              <table>
                 <thead>
                   <tr>
-                    <th>Code</th>
-                    <th>Company</th>
-                    <th>Price</th>
-                    <th>Change</th>
-                    <th>Change %</th>
+                    <th>Name</th>
+                    <th>Salary</th>
+                    <th>Age</th>
+                    <th />
+                    <th />
                   </tr>
                 </thead>
               </table>
             </div>
-            <div class="tbl-content">
-              <table cellpadding="0" cellspacing="0" border="0">
-                <tbody>
-                  <tr>
-                    <td>AAC</td>
-                    <td>AUSTRALIAN COMPANY </td>
-                    <td>$1.38</td>
-                    <td>+2.01</td>
-                    <td>-0.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAD</td>
-                    <td>AUSENCO</td>
-                    <td>$2.38</td>
-                    <td>-0.01</td>
-                    <td>-1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAX</td>
-                    <td>ADELAIDE</td>
-                    <td>$3.22</td>
-                    <td>+0.01</td>
-                    <td>+1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>XXD</td>
-                    <td>ADITYA BIRLA</td>
-                    <td>$1.02</td>
-                    <td>-1.01</td>
-                    <td>+2.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAC</td>
-                    <td>AUSTRALIAN COMPANY </td>
-                    <td>$1.38</td>
-                    <td>+2.01</td>
-                    <td>-0.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAD</td>
-                    <td>AUSENCO</td>
-                    <td>$2.38</td>
-                    <td>-0.01</td>
-                    <td>-1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAX</td>
-                    <td>ADELAIDE</td>
-                    <td>$3.22</td>
-                    <td>+0.01</td>
-                    <td>+1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>XXD</td>
-                    <td>ADITYA BIRLA</td>
-                    <td>$1.02</td>
-                    <td>-1.01</td>
-                    <td>+2.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAC</td>
-                    <td>AUSTRALIAN COMPANY </td>
-                    <td>$1.38</td>
-                    <td>+2.01</td>
-                    <td>-0.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAD</td>
-                    <td>AUSENCO</td>
-                    <td>$2.38</td>
-                    <td>-0.01</td>
-                    <td>-1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAX</td>
-                    <td>ADELAIDE</td>
-                    <td>$3.22</td>
-                    <td>+0.01</td>
-                    <td>+1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>XXD</td>
-                    <td>ADITYA BIRLA</td>
-                    <td>$1.02</td>
-                    <td>-1.01</td>
-                    <td>+2.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAC</td>
-                    <td>AUSTRALIAN COMPANY </td>
-                    <td>$1.38</td>
-                    <td>+2.01</td>
-                    <td>-0.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAD</td>
-                    <td>AUSENCO</td>
-                    <td>$2.38</td>
-                    <td>-0.01</td>
-                    <td>-1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAX</td>
-                    <td>ADELAIDE</td>
-                    <td>$3.22</td>
-                    <td>+0.01</td>
-                    <td>+1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>XXD</td>
-                    <td>ADITYA BIRLA</td>
-                    <td>$1.02</td>
-                    <td>-1.01</td>
-                    <td>+2.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAC</td>
-                    <td>AUSTRALIAN COMPANY </td>
-                    <td>$1.38</td>
-                    <td>+2.01</td>
-                    <td>-0.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAD</td>
-                    <td>AUSENCO</td>
-                    <td>$2.38</td>
-                    <td>-0.01</td>
-                    <td>-1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAX</td>
-                    <td>ADELAIDE</td>
-                    <td>$3.22</td>
-                    <td>+0.01</td>
-                    <td>+1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>XXD</td>
-                    <td>ADITYA BIRLA</td>
-                    <td>$1.02</td>
-                    <td>-1.01</td>
-                    <td>+2.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAC</td>
-                    <td>AUSTRALIAN COMPANY </td>
-                    <td>$1.38</td>
-                    <td>+2.01</td>
-                    <td>-0.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAD</td>
-                    <td>AUSENCO</td>
-                    <td>$2.38</td>
-                    <td>-0.01</td>
-                    <td>-1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAX</td>
-                    <td>ADELAIDE</td>
-                    <td>$3.22</td>
-                    <td>+0.01</td>
-                    <td>+1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>XXD</td>
-                    <td>ADITYA BIRLA</td>
-                    <td>$1.02</td>
-                    <td>-1.01</td>
-                    <td>+2.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAC</td>
-                    <td>AUSTRALIAN COMPANY </td>
-                    <td>$1.38</td>
-                    <td>+2.01</td>
-                    <td>-0.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAD</td>
-                    <td>AUSENCO</td>
-                    <td>$2.38</td>
-                    <td>-0.01</td>
-                    <td>-1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAX</td>
-                    <td>ADELAIDE</td>
-                    <td>$3.22</td>
-                    <td>+0.01</td>
-                    <td>+1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>XXD</td>
-                    <td>ADITYA BIRLA</td>
-                    <td>$1.02</td>
-                    <td>-1.01</td>
-                    <td>+2.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAC</td>
-                    <td>AUSTRALIAN COMPANY </td>
-                    <td>$1.38</td>
-                    <td>+2.01</td>
-                    <td>-0.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAD</td>
-                    <td>AUSENCO</td>
-                    <td>$2.38</td>
-                    <td>-0.01</td>
-                    <td>-1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>AAX</td>
-                    <td>ADELAIDE</td>
-                    <td>$3.22</td>
-                    <td>+0.01</td>
-                    <td>+1.36%</td>
-                  </tr>
-                  <tr>
-                    <td>XXD</td>
-                    <td>ADITYA BIRLA</td>
-                    <td>$1.02</td>
-                    <td>-1.01</td>
-                    <td>+2.36%</td>
-                  </tr>
-                </tbody>
+            <div className='tbl-body'>
+              <table>
+                <tbody>{rows}</tbody>
               </table>
             </div>
-
-
-            {/* Modals */}
-            <div id="open-modal-view" class="modal-window">
-              <div>
-                <a href="#modal-close" title="Close" class="modal-close">close &times;</a>
-                <h1>View Employee By ID</h1>
-                <div>The quick brown fox jumped over the lazy dog.</div>
-              </div>
+            <br />
+            <div className='col-3'>
+              <input
+                className='effect-2'
+                type='text'
+                placeholder='Name:'
+                id='iname'
+                value={this.state.name}
+                onChange={e => this.setState({ name: e.target.value })}
+              />
+              <span className='focus-border' />
             </div>
-
-            <div id="open-modal-add" class="modal-window">
-              <div>
-                <a href="#modal-close" title="Close" class="modal-close">close &times;</a>
-                <h1>Add Employee</h1>
-                <div>The quick brown fox jumped over the lazy dog.</div>
-              </div>
+            <div className='col-3'>
+              <input
+                className='effect-2'
+                type='number'
+                placeholder='Salary:'
+                id='isalary'
+                value={this.state.salary}
+                onChange={e => this.setState({ salary: e.target.value })}
+              />
+              <span className='focus-border' />
             </div>
-
-            <div id="open-modal-update" class="modal-window">
-              <div>
-                <a href="#modal-close" title="Close" class="modal-close">close &times;</a>
-                <h1>Update Employee</h1>
-                <div>The quick brown fox jumped over the lazy dog.</div>
-              </div>
+            <div className='col-3'>
+              <input
+                className='effect-2'
+                type='number'
+                placeholder='Age:'
+                id='iage'
+                value={this.state.age}
+                onChange={e => this.setState({ age: e.target.value })}
+              />
+              <span className='focus-border' />
             </div>
-
-            <div id="open-modal-delete" class="modal-window">
-              <div>
-                <a href="#modal-close" title="Close" class="modal-close">close &times;</a>
-                <h1>Delete Employee</h1>
-                <div>The quick brown fox jumped over the lazy dog.</div>
-              </div>
-            </div>
-
+            <button
+              className='btn-add'
+              onClick={() => {
+                this.saveEmp(data);
+                this.resetCreateForm();
+                alert('Successfully Added ' + this.state.name + '!')
+              }}
+            >
+              SUBMIT
+            </button>
           </div>
         </div>
       </div>
-
     );
   }
 }
